@@ -7,13 +7,14 @@ We first propose a novel hybrid framework by integrating a point feature encoder
 <img src="docs/network.jpg" width="100%"> 
 
 ## 1. Recommended Environment
+We have tested this project with the following environments:
 - Ubuntu 18.04
 - Python 3.7.13
 - PyTorch 1.7.0, cuda 11.0 version
 - CUDA NVCC 11.1
 - Spconv 2.1.21
 
-## 2. Set the Environment
+## 2. Installation
 ``` bash
 pip install -r requirement.txt
 bash compile.sh
@@ -37,18 +38,48 @@ python -m pcdet.datasets.kitti.kitti_dataset create_kitti_infos tools/cfgs/datas
 ## 4. Train
 ```
 cd tools
+# a. train the two-stage model
 python ./train.py --cfg_file ./cfg/kitti_models/hybridpillars.yaml
 
-or 
+or
 
-bash tools/scripts/dist_train.sh ${NUM_GPUS} --cfg_file ${CONFIG_FILE}
+# b. train the single-stage model
+python ./train.py --cfg_file ./cfg/kitti_models/hybridpillars-ssd.yaml
 ```
+Support single or multiple GPUs training.
 ## 5. Test
 ```
 python test.py --cfg-file ${CONFIG_FILE} --ckpt ${CKPT}
 ```
-## 6. Acknowledgement
+## 6. FLOPs Calculation Method
+- Please following [link 1](https://github.com/open-mmlab/OpenPCDet/issues/1403) and [link 2](https://github.com/CVMI-Lab/SparseKD/blob/master/docs/GETTING_STARTED.md) to install thop with SPCONV extension
+- We provide an API for FLOPs Calculation
+``` python
+from pcdet.utils.spconv_utils import spconv
+from thop import profile, clever_format, profile_acts
+
+def cal_flops(model, batch_dict):
+    macs, params, acts = profile_acts(model, inputs=(batch_dict,),
+                           custom_ops={
+                            spconv.SubMConv3d: spconv.SubMConv3d.count_your_model,
+                            spconv.SparseConv3d: spconv.SparseConv3d.count_your_model,
+                            spconv.SubMConv2d: spconv.SubMConv2d.count_your_model,
+                            spconv.SparseConv2d: spconv.SparseConv2d.count_your_model}
+                           )
+    return macs, params, acts
+
+...
+
+macs, params, acts = cal_flops(model, data_dict)
+```
+
+## 7. Acknowledgement
 - Thanks for the [OpenPCDet](https://github.com/open-mmlab/OpenPCDet), this implementation is mainly based on the pcdet v0.6.0.
 - Parts of our code refer to the excellent work [IA-SSD](https://github.com/yifanzhang713/IA-SSD).
 
-## 6. Citation
+## License
+
+This project is released under the [Apache 2.0 license](LICENSE).
+
+## Citation
+Coming soon.
