@@ -82,4 +82,17 @@ macs, params, acts = cal_flops(model, data_dict)
 This project is released under the [Apache 2.0 license](LICENSE).
 
 ## Citation
-Coming soon.
+If you find this project useful in your research, please consider cite:
+```
+@ARTICLE{
+  HybridPillars2024,
+  author={Huang, Zhicong and Huang, Yuxiao and Zheng, Zhijie and Hu, Haifeng and Chen, Dihu},
+  journal={IEEE Sensors Journal}, 
+  title={HybridPillars: Hybrid Point-Pillar Network for Real-Time Two-Stage 3-D Object Detection}, 
+  year={2024},
+  volume={24},
+  number={22},
+  pages={38318-38328},
+  doi={10.1109/JSEN.2024.3468646}
+}
+```
